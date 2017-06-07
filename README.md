@@ -1,8 +1,79 @@
 # PRG04 Week7 oefening1
 
-## Flappy Crossroads Continued
-
 ![Crossroads](docs/images/screenshot.png?raw=true "Crossroads")
+
+## Flappy Crossroads
+
+De Car verwijdert zichzelf nadat hij buiten beeld gaat:
+
+**car.ts**
+```
+public move():void {
+    this.x++;
+    if(this.x > 600){
+        this.div.remove();
+        this.game.removeCar(this);
+    }
+}
+```
+
+**level.ts**
+```
+public removeCar(c:Car):void {
+    let index = this.cars.indexOf(c);
+    this.cars.splice(index, 1);
+}
+```
+
+### Game Over
+
+Als de speler een auto raakt roep je de gameOver functie aan:
+
+**level.ts**
+```
+private gameOver():void {
+    let g = new Grave(this.player.x, this.player.y, this.div);
+    this.player.removeMe();
+    this.player = undefined;
+    clearInterval(this.timerid);
+}
+```
+
+**player.ts**
+```
+public removeMe(){
+    this.div.remove();
+}
+```
+
+### Score
+
+Als de speler boven in beeld komt, dan scoor je een punt. De score wordt bijgehouden in Level.
+
+**player.ts**
+```
+private onKeyDown(event:KeyboardEvent):void {
+    switch(event.keyCode){
+    case 87:
+        this.y -= 50;
+        if(this.y + this.height < 0){  
+            this.y = 670;
+            this.level.updateScore();
+        }
+        break;
+    }
+}
+```
+
+**level.ts**
+```
+public updateScore(){
+    this.score++;
+    document.getElementsByTagName("ui")[0].innerHTML = "SCORE " + this.score;
+}
+```
+
+## Flappy Crossroads Continued
 
 ### Clamp
 
