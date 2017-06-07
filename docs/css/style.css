@@ -1,0 +1,51 @@
+html, body {
+    background-color: #70CF51;
+    font-family: 'Press Start 2P', cursive;
+    overflow:hidden;
+    margin:0px; padding:0px;
+    background-image: url('../images/grass.png');
+    background-size: cover;
+}
+
+body * {
+    position: absolute;
+    display: block;
+    margin:0px; padding:0px;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+}
+
+ui {
+    font-size:22px;
+    text-shadow: 4px 4px 0px black;
+    color:white;
+    padding:20px;
+    width:100%;
+    text-align: center;
+}
+
+level {
+    left:calc(50% - 512px);
+    top:calc(50% - 384px);
+    width:1024px; height:768px;
+    background-image: url('../images/road.png');
+    border-radius: 15px;
+    overflow: hidden;
+    border:3px solid white;
+    box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.5);
+}
+
+car {
+	width:168px; min-height:108px;
+	background-image: url('../images/car.png');
+}
+
+grave {
+	width:129px; min-height:110px;
+	background-image: url('../images/grave.png');
+}
+
+player {
+    width:61px; height:102px;
+    background-image: url('../images/player.png');
+}
