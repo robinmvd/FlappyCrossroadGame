@@ -39,10 +39,20 @@ private gameOver():void {
 }
 ```
 
+Let op dat de player een window eventlistener heeft. Deze moet je verwijderen als je de player verwijdert.
+
 **player.ts**
 ```
-public removeMe(){
-    this.div.remove();
+class Player {
+	private callback:EventListener;
+	constructor(){
+		this.callback = (e:KeyboardEvent) => this.onKeyDown(e);
+        window.addEventListener("keydown", this.callback);
+	}
+	public removeMe():void {
+        this.div.remove();
+        window.removeEventListener("keydown", this.callback);
+    }
 }
 ```
 
@@ -205,6 +215,10 @@ De car heeft al een snelheid functie, die kunnen we vermenigvuldigen met een mul
 let multiplier = this.level.score + 1;
 this.speed = this.y/100 * multiplier;
 ```
+
+### Interface 
+
+Om meerdere schermen te bouwen kan je het level als apart gameobject zien. Er komt dan ook een gameobject voor het startscherm en het scorescherm. Zie deze [demo](https://hr-cmgt.github.io/PRG08-Week7-oefening1-completed/). Om dit te bouwen kan je [deze oefening uit PRG8](https://github.com/HR-CMGT/PRG08-Week7-oefening1) bekijken.
 
 ### Car Collision Advanced
 
