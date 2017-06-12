@@ -4,10 +4,7 @@
 class Level {
     
     public div: HTMLElement;
-    public x:number;
-    public y:number;
-    public width:number;
-    public height:number;
+    
     public score:number = 0;
     
     private cars:Array<Car> = new Array<Car>();
