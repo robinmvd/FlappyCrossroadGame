@@ -12,6 +12,29 @@ Zet die in een `GameObject` class waar beide van overerven.
 Als Flappy dood gaat, maak dan een `new Grave()` en plaats die op de plek des onheils.
 Flappy zelf plaats je weer terug op de startpositie onderin het scherm.
 
+### Meer Cars aanmaken
+
+Zodra de speler boven in beeld komt kan je het volgende doen:
+
+ - De game pushed een extra `new Car()` in de cars array.
+ - De game kan een speed meegeven aan de car via de constructor.
+ - Die speed wordt hoger als er meer auto's zijn
+
+
+```
+class Car {
+    constructor(s:number) {
+        this.speed = s
+    }
+}
+class Game {
+    addCar() {
+        let speed = this.cars.length
+        this.cars.push(new Car(speed))
+    }
+}
+```
+
 ## Bonus DLC
 
 ### Clamp
@@ -84,33 +107,3 @@ this.div = document.createElement("car");
 level.div.insertBefore( this.div, level.div.firstChild );
 ```
 
-### Car Collision
-
-Om te voorkomen dat auto's met elkaar botsen in een rij, kan je de car speed afhankelijk maken van de rij.
-```
-this.speed = this.y/100;
-```
-
-### Moeilijkheidsgraad
-
-Om het spel moeilijker te maken als je verder komt, kan je de frequentie en de snelheid van de auto's afhankelijk maken van de voortgang van de speler. 
-Zodra de speler boven in beeld komt kan je het volgende doen:
-
- - De game pushed een extra `new Car()` in de cars array.
- - De game kan een speed meegeven aan de car via de constructor.
- - Die speed wordt hoger als er meer auto's zijn
-
-
-```
-class Car {
-    constructor(s:number) {
-        this.speed = s
-    }
-}
-class Game {
-    constructor() {
-        let speed = this.cars.length
-        this.cars.push(new Car(speed))
-    }
-}
-```
