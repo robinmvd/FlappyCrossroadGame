@@ -1,46 +1,41 @@
 class Car {
 
-    private speed: number = 0;
-    private level: Level;
+    private speed: number = 0
+    private div: HTMLElement
+    private x: number
+    private y: number
 
-    public div: HTMLElement;
-    public x: number;
-    public y: number;
-    public width: number;
-    public height: number;
+    constructor() {
+        this.div = document.createElement("car")
+        let level = document.getElementsByTagName("level")[0]!
+        level.appendChild(this.div)
 
-    constructor(l:Level) {
-        this.div = document.createElement("car");
-        l.div.appendChild(this.div);
+        this.x = (Math.random() * -400) - 168
+        this.y = Math.ceil(Math.random() * 5) * 120
+        this.speed = Math.random() * 2 + 2
+        this.setColor()
+    }
 
-        this.level = l;
-
-        this.x = -168;
-        this.y = Math.ceil(Math.random() * 5) * 110;
-        this.width = 168;
-        this.height = 108;
-        this.speed = Math.random() * 2 + 2;
-        this.setColor();
-        this.update();
+    public getRectangle() {
+        return this.div.getBoundingClientRect()
     }
 
     public update(): void {
-        this.x += this.speed;
+        this.x += this.speed
+        
         if (this.x > window.innerWidth) {
-            console.log("Auto uit beeld: " + this.x);
-            // 1 - verwijder het div element van deze car uit de DOM
-            // this.div.remove();
-            // 2 - verwijder deze instance uit de cars array in level.ts
-            // this.level.removeCar(this);
+            this.x = -168
         }
 
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)"
     }
 
     private setColor() {
-        let color:number = Math.random()*360; 
-        this.div.style.webkitFilter = "hue-rotate("+color+"deg)";
-        this.div.style.filter = "hue-rotate("+color+"deg)";
+        let color:number = Math.random()*360 
+        this.div.style.webkitFilter = "hue-rotate("+color+"deg)"
+        this.div.style.filter = "hue-rotate("+color+"deg)"
     }
+
+    
 
 }

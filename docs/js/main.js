@@ -1,21 +1,22 @@
+"use strict";
 var Car = (function () {
-    function Car(l) {
+    function Car() {
         this.speed = 0;
         this.div = document.createElement("car");
-        l.div.appendChild(this.div);
-        this.level = l;
-        this.x = -168;
-        this.y = Math.ceil(Math.random() * 5) * 110;
-        this.width = 168;
-        this.height = 108;
+        var level = document.getElementsByTagName("level")[0];
+        level.appendChild(this.div);
+        this.x = (Math.random() * -400) - 168;
+        this.y = Math.ceil(Math.random() * 5) * 120;
         this.speed = Math.random() * 2 + 2;
         this.setColor();
-        this.update();
     }
+    Car.prototype.getRectangle = function () {
+        return this.div.getBoundingClientRect();
+    };
     Car.prototype.update = function () {
         this.x += this.speed;
         if (this.x > window.innerWidth) {
-            console.log("Auto uit beeld: " + this.x);
+            this.x = -168;
         }
         this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     };
@@ -27,31 +28,35 @@ var Car = (function () {
     return Car;
 }());
 var Player = (function () {
-    function Player(l) {
+    function Player() {
         var _this = this;
-        this.level = l;
+        this.div = document.createElement("player");
+        var level = document.getElementsByTagName("level")[0];
+        level.appendChild(this.div);
         this.x = 400;
         this.y = 670;
-        this.width = 61;
-        this.height = 102;
-        document.getElementsByTagName("ui")[0].innerHTML = "Score: 0";
-        this.div = document.createElement("player");
-        this.level.div.appendChild(this.div);
         window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
     }
+    Player.prototype.getRectangle = function () {
+        return this.div.getBoundingClientRect();
+    };
     Player.prototype.update = function () {
         this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     };
     Player.prototype.onKeyDown = function (event) {
         switch (event.keyCode) {
             case 65:
-                this.x -= this.width;
+                this.x -= 102;
                 break;
             case 68:
-                this.x += this.width;
+                this.x += 102;
                 break;
             case 87:
                 this.y -= 30;
+                if (this.y < -50) {
+                    this.y = 670;
+                    console.log("de overkant gehaald!");
+                }
                 break;
             case 83:
                 this.y += 30;
@@ -62,39 +67,27 @@ var Player = (function () {
 }());
 var Level = (function () {
     function Level() {
-        var _this = this;
-        this.score = 0;
-        this.cars = new Array();
+        this.cars = [];
         this.div = document.createElement("level");
         document.body.appendChild(this.div);
-        var ui = document.createElement("ui");
-        this.div.appendChild(ui);
-        this.updateScore();
-        setInterval(function () { return _this.createCar(); }, 1400);
-        this.player = new Player(this);
+        this.cars.push(new Car(), new Car(), new Car(), new Car(), new Car());
+        this.player = new Player();
     }
-    Level.prototype.createCar = function () {
-        this.cars.push(new Car(this));
-        console.log("aantal autos: " + this.cars.length);
-    };
     Level.prototype.update = function () {
         this.player.update();
         for (var _i = 0, _a = this.cars; _i < _a.length; _i++) {
             var c = _a[_i];
             c.update();
-            if (Util.checkCollision(c, this.player)) {
+            if (this.checkCollision(c.getRectangle(), this.player.getRectangle())) {
                 console.log("Een auto raakt de speler!");
             }
         }
     };
-    Level.prototype.updateScore = function () {
-        document.getElementsByTagName("ui")[0].innerHTML = "SCORE 0";
-    };
-    Level.prototype.removeCar = function (c) {
-        var i = this.cars.indexOf(c);
-        if (i != -1) {
-            this.cars.splice(i, 1);
-        }
+    Level.prototype.checkCollision = function (a, b) {
+        return (a.left <= b.right &&
+            b.left <= a.right &&
+            a.top <= b.bottom &&
+            b.top <= a.bottom);
     };
     return Level;
 }());
@@ -109,28 +102,16 @@ var Game = (function () {
     };
     return Game;
 }());
-window.addEventListener("load", function () {
-    new Game();
-});
+window.addEventListener("load", function () { return new Game(); });
 var Grave = (function () {
-    function Grave(x, y, parent) {
+    function Grave(x, y) {
         this.div = document.createElement("grave");
-        parent.appendChild(this.div);
+        var level = document.getElementsByTagName("level")[0];
+        level.appendChild(this.div);
         this.x = x;
         this.y = y;
         this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     }
     return Grave;
-}());
-var Util = (function () {
-    function Util() {
-    }
-    Util.checkCollision = function (car, player) {
-        return (car.x < player.x + player.width &&
-            car.x + car.width > player.x &&
-            car.y < player.y + player.height &&
-            car.height + car.y > player.y);
-    };
-    return Util;
 }());
 //# sourceMappingURL=main.js.map

@@ -1,12 +1,13 @@
 class Grave {
 
-    public div: HTMLElement;
-    public x: number;
-    public y: number;
+    private div: HTMLElement;
+    private x: number;
+    private y: number;
 
-    constructor(x:number, y:number, parent: HTMLElement) {
-        this.div = document.createElement("grave");
-        parent.appendChild(this.div);
+    constructor(x:number, y:number) {
+        this.div = document.createElement("grave")
+        let level = document.getElementsByTagName("level")[0]!
+        level.appendChild(this.div)
 
         this.x = x;
         this.y = y;

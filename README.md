@@ -1,93 +1,22 @@
-# PRG04 Week7 oefening1
+# PRG04 Week7 oefening1 : Flappy Crossroads
 
 ![Crossroads](docs/images/screenshot.png?raw=true "Crossroads")
 
-## Flappy Crossroads
+## Inheritance
 
-De Car verwijdert zichzelf nadat hij buiten beeld gaat:
+Kijk goed naar de Car, Grave en de Player classes. Welke properties en methods zijn identiek?
+Zet die in een `GameObject` class waar beide van overerven.
 
-**car.ts**
-```
-public move():void {
-    this.x++;
-    if(this.x > 600){
-        this.div.remove();
-        this.game.removeCar(this);
-    }
-}
-```
+## Composition
 
-**level.ts**
-```
-public removeCar(c:Car):void {
-    let index = this.cars.indexOf(c);
-    this.cars.splice(index, 1);
-}
-```
+Als Flappy dood gaat, maak dan een `new Grave()` en plaats die op de plek des onheils.
+Flappy zelf plaats je weer terug op de startpositie onderin het scherm.
 
-### Game Over
-
-Als de speler een auto raakt roep je de gameOver functie aan:
-
-**level.ts**
-```
-private gameOver():void {
-    let g = new Grave(this.player.x, this.player.y, this.div);
-    this.player.removeMe();
-    this.player = undefined;
-    clearInterval(this.timerid);
-}
-```
-
-Let op dat de player een window eventlistener heeft. Deze moet je verwijderen als je de player verwijdert.
-
-**player.ts**
-```
-class Player {
-	private callback:EventListener;
-	constructor(){
-		this.callback = (e:KeyboardEvent) => this.onKeyDown(e);
-        window.addEventListener("keydown", this.callback);
-	}
-	public removeMe():void {
-        this.div.remove();
-        window.removeEventListener("keydown", this.callback);
-    }
-}
-```
-
-### Score
-
-Als de speler boven in beeld komt, dan scoor je een punt. De score wordt bijgehouden in Level.
-
-**player.ts**
-```
-private onKeyDown(event:KeyboardEvent):void {
-    switch(event.keyCode){
-    case 87:
-        this.y -= 50;
-        if(this.y + this.height < 0){  
-            this.y = 670;
-            this.level.updateScore();
-        }
-        break;
-    }
-}
-```
-
-**level.ts**
-```
-public updateScore(){
-    this.score++;
-    document.getElementsByTagName("ui")[0].innerHTML = "SCORE " + this.score;
-}
-```
-
-## Flappy Crossroads Continued
+## Bonus DLC
 
 ### Clamp
 
-Math gebruiken zodat de speler niet uit beeld kan lopen
+`Math.max` gebruiken zodat de speler niet uit beeld kan lopen
 
 **player.ts**
 ```
@@ -106,18 +35,9 @@ private onKeyDown(event:KeyboardEvent):void {
 }
 ```
 
-### Stay in your own lane
-
-Y waarde afronden zodat elke auto in zijn eigen rij blijft
-
-**car.ts**
-```
-this.y = Math.round(Math.random() * 5) * 120;
-```
-
 ### Hitbox
 
-Een hitbox zorgt ervoor dat de collision check niet altijd op de gehele afbeelding plaatsvindt. De hitbox is een div binnen het gameobject. We kunnen die div kleiner maken dan het gameobject.
+Een hitbox zorgt ervoor dat de collision check niet op de gehele afbeelding plaatsvindt. De hitbox is een div binnen het gameobject. We kunnen de hitbox kleiner maken dan het gameobject.
 
 **style.css**
 ```
@@ -136,38 +56,21 @@ playerhitbox {
 
 **car.ts en player.ts**
 ```
-public div: HTMLElement;    
-public hitbox: HTMLElement;
+private div: HTMLElement;    
+private hitbox: HTMLElement;
 
 this.div = document.createElement("player");
-parent.appendChild(this.div);
-
 this.hitbox = document.createElement("playerhitbox");
 this.div.appendChild(this.hitbox);
+
+level.appendChild(this.div);
 ```
 
-In de collision functie checken we nu twee hitboxes in plaats van een car en een player.
+In de `getRectangle()` functie geven we nu niet de div terug maar de hitbox, om te kijken of we iets raken
 
-**util.ts**
 ```
-public static checkCollision(hitbox1:HTMLElement, hitbox2:HTMLElement):boolean {
-
-    let rect1:ClientRect = hitbox1.getBoundingClientRect();
-    let rect2:ClientRect = hitbox2.getBoundingClientRect();
-
-    return (rect2.left < rect1.right &&
-            rect2.right > rect1.left &&
-            rect2.top < rect1.bottom &&
-            rect2.bottom > rect1.top)
-}
-```
-
-In het level checken we de hitbox van de car tegen de hitbox van de player.
-
-**level.ts**
-```
-if(Util.checkCollision(c.hitbox, this.player.hitbox)){
-     this.gameOver();
+public getRectangle() {
+    return this.hitbox.getBoundingClientRect()
 }
 ```
 
@@ -183,66 +86,31 @@ level.div.insertBefore( this.div, level.div.firstChild );
 
 ### Car Collision
 
-Om te voorkomen dat auto's botsen kan je de car speed afhankelijk maken van de rij.
+Om te voorkomen dat auto's met elkaar botsen in een rij, kan je de car speed afhankelijk maken van de rij.
 ```
 this.speed = this.y/100;
 ```
 
 ### Moeilijkheidsgraad
 
-Om het spel moeilijker te maken als je verder komt, kan je de frequentie en de snelheid van de auto's afhankelijk maken van de score. Vervang setInterval door setTimeout. Je kan nu de interval aanpassen tijdens het spel.
+Om het spel moeilijker te maken als je verder komt, kan je de frequentie en de snelheid van de auto's afhankelijk maken van de voortgang van de speler. 
+Zodra de speler boven in beeld komt kan je het volgende doen:
 
-**level.ts**
+ - De game pushed een extra `new Car()` in de cars array.
+ - De game kan een speed meegeven aan de car via de constructor.
+ - Die speed wordt hoger als er meer auto's zijn
+
+
 ```
-class Level {
-    public score:number = 0;
+class Car {
+    constructor(s:number) {
+        this.speed = s
+    }
+}
+class Game {
     constructor() {
-        this.timerid = setTimeout(() => this.createCar(), 2000);
-    }
-
-    private createCar(): void {
-        this.cars.push(new Car(this));
-        let pauseTime = 2000 - this.score * 100;
-        this.timerid = setTimeout(() => this.createCar(), pauseTime);
+        let speed = this.cars.length
+        this.cars.push(new Car(speed))
     }
 }
 ```
-
-De car heeft al een snelheid functie, die kunnen we vermenigvuldigen met een multiplier. Die multiplier verhogen we naar mate de score hoger wordt.
-
-**car.ts**
-```
-let multiplier = this.level.score + 1;
-this.speed = this.y/100 * multiplier;
-```
-
-### Interface 
-
-Om meerdere schermen te bouwen kan je het level als apart gameobject zien. Er komt dan ook een gameobject voor het startscherm en het scorescherm. Zie deze [demo](https://hr-cmgt.github.io/PRG08-Week7-oefening1-completed/). Om dit te bouwen kan je [deze oefening uit PRG8](https://github.com/HR-CMGT/PRG08-Week7-oefening1) bekijken.
-
-### Car Collision Advanced
-
-Als de snelheid van de auto's volledig random is, dan kunnen ze ook tegen elkaar botsen. De collision functie kunnen we nu ook gebruiken om te zien of cars botsen. 
-```
-if(Util.checkCollision(car1.hitbox, car2.hitbox)){
-      console.log("auto 1 raakt auto 2");
-}
-```
-
-Per car maken we een loop die door alle cars heen loopt. Als daar een collision ontstaat dan raken twee auto's elkaar. Let op dat je niet checkt of een auto zichzelf raakt!
-Als er een hit is maken we de snelheid gelijk. Je zou ook nog de auto's iets uit elkaar kunnen plaatsen, om te voorkomen dat de collision telkens true terug blijft geven.
-```
-for(let c1 of this.cars){
-    c1.update();
-
-    for(let c2 of this.cars){
-        if(c1 != c2){
-            if(Util.checkHitbox(c1.hitbox, c2.hitbox)){
-                 console.log("de auto raakt een andere auto");
-                 c1.speed = c2.speed;
-            }
-        }
-    }
-}
-```
-
