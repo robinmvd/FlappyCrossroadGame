@@ -7,7 +7,12 @@ html, body {
     background-size: cover;
 }
 
-body * {
+
+script {
+    display:none;
+}
+
+ui, level, car, grave, player, background {
     position: absolute;
     display: block;
     margin:0px; padding:0px;
