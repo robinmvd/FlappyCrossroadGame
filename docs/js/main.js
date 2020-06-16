@@ -27,6 +27,28 @@ var Car = (function () {
     };
     return Car;
 }());
+var Game = (function () {
+    function Game() {
+        this.div = document.createElement("level");
+        document.body.appendChild(this.div);
+        this.player = new Player();
+        this.gameLoop();
+    }
+    Game.prototype.gameLoop = function () {
+        this.player.update();
+        requestAnimationFrame(this.gameLoop.bind(this));
+    };
+    Game.prototype.update = function () {
+    };
+    Game.prototype.checkCollision = function (a, b) {
+        return (a.left <= b.right &&
+            b.left <= a.right &&
+            a.top <= b.bottom &&
+            b.top <= a.bottom);
+    };
+    return Game;
+}());
+window.addEventListener("load", function () { return new Game(); });
 var Player = (function () {
     function Player() {
         var _this = this;
@@ -64,54 +86,5 @@ var Player = (function () {
         }
     };
     return Player;
-}());
-var Level = (function () {
-    function Level() {
-        this.cars = [];
-        this.div = document.createElement("level");
-        document.body.appendChild(this.div);
-        this.cars.push(new Car(), new Car(), new Car(), new Car(), new Car());
-        this.player = new Player();
-    }
-    Level.prototype.update = function () {
-        this.player.update();
-        for (var _i = 0, _a = this.cars; _i < _a.length; _i++) {
-            var c = _a[_i];
-            c.update();
-            if (this.checkCollision(c.getRectangle(), this.player.getRectangle())) {
-                console.log("Een auto raakt de speler!");
-            }
-        }
-    };
-    Level.prototype.checkCollision = function (a, b) {
-        return (a.left <= b.right &&
-            b.left <= a.right &&
-            a.top <= b.bottom &&
-            b.top <= a.bottom);
-    };
-    return Level;
-}());
-var Game = (function () {
-    function Game() {
-        this.level = new Level();
-        requestAnimationFrame(this.gameLoop.bind(this));
-    }
-    Game.prototype.gameLoop = function () {
-        this.level.update();
-        requestAnimationFrame(this.gameLoop.bind(this));
-    };
-    return Game;
-}());
-window.addEventListener("load", function () { return new Game(); });
-var Grave = (function () {
-    function Grave(x, y) {
-        this.div = document.createElement("grave");
-        var level = document.getElementsByTagName("level")[0];
-        level.appendChild(this.div);
-        this.x = x;
-        this.y = y;
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
-    }
-    return Grave;
 }());
 //# sourceMappingURL=main.js.map
