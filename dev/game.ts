@@ -1,18 +1,33 @@
-/// <reference path="level.ts"/>
-
 class Game {
+    private div: HTMLElement
     
-    private level:Level;
-     
-    constructor() {
-        this.level = new Level();   
-        requestAnimationFrame(this.gameLoop.bind(this));
+    private player:Player
+    
+    constructor() {    
+        this.div = document.createElement("level")
+        document.body.appendChild(this.div)
+    
+        this.player = new Player()
+
+        this.gameLoop()
     }
-    
+
     private gameLoop(){
-        this.level.update();      
+        this.player.update()
+
         requestAnimationFrame(this.gameLoop.bind(this));
     }
+
+    public update() : void {
+        
+    }
+
+    private checkCollision(a: ClientRect, b: ClientRect) {
+        return (a.left <= b.right &&
+            b.left <= a.right &&
+            a.top <= b.bottom &&
+            b.top <= a.bottom)
+        }
 } 
 
 
