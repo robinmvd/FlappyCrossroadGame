@@ -2,6 +2,12 @@
 
 ![Crossroads](docs/images/screenshot.png?raw=true "Crossroads")
 
+- Met 'W', 'A', 'S' en 'D' kun je Flappy besturen.
+- Flappy kan overreden worden door auto's hoe maak je die aan?
+- Flappy kan doodgaan, hoe verwerk je dit in je code?
+- Kijk naar de bestaande classes, welke zijn er nog meer?
+- Welke properties en methods zijn hetzelfde? Kun je dit overerven?
+
 ## Inheritance
 
 Kijk goed naar de Car, Grave en de Player classes. Welke properties en methods zijn identiek?
