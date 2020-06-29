@@ -40,6 +40,11 @@ level {
     box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.5);
 }
 
+score {
+    top: 8px;
+    left: 15px;
+}
+
 car {
 	width:168px; min-height:108px;
 	background-image: url('../images/car.png');
