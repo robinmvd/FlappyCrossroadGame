@@ -1,10 +1,16 @@
-class Player {
+/// <reference path="gameobject.ts" />
 
-    private div: HTMLElement    
-    private x:number
-    private y:number
+class Player extends GameObject {
 
-    constructor() {
+    private game : Game
+
+
+    constructor(game : Game) {
+
+        super()
+
+        this.game = game
+
         this.div = document.createElement("player")
         let level = document.getElementsByTagName("level")[0]!
         level.appendChild(this.div)
@@ -14,13 +20,14 @@ class Player {
         
         window.addEventListener("keydown", (e:KeyboardEvent) => this.onKeyDown(e))
     }
-
-    public getRectangle() {
-        return this.div.getBoundingClientRect()
-    }
     
     public update() : void {
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)"
+       super.update()
+    }
+
+    public reset() : void {
+        this.x = 400
+        this.y = 670
     }
 
     // W A S D
@@ -37,6 +44,7 @@ class Player {
             if(this.y < -50) {
                 this.y = 670
                 console.log("de overkant gehaald!")
+                this.game.addPoint()
             }
             break
         case 83:

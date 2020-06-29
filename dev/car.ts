@@ -1,11 +1,17 @@
-class Car {
+/// <reference path="gameobject.ts" />
+class Car extends GameObject {
 
     private speed: number = 0
-    private div: HTMLElement
-    private x: number
-    private y: number
+    private _color: number
+    
+
+    public get color(): number {return this._color}
+    public set color(value: number) {this._color = value}
 
     constructor() {
+
+        super()
+
         this.div = document.createElement("car")
         let level = document.getElementsByTagName("level")[0]!
         level.appendChild(this.div)
@@ -16,10 +22,6 @@ class Car {
         this.setColor()
     }
 
-    public getRectangle() {
-        return this.div.getBoundingClientRect()
-    }
-
     public update(): void {
         this.x += this.speed
         
@@ -27,13 +29,19 @@ class Car {
             this.x = -168
         }
 
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)"
+        super.update()
     }
 
     private setColor() {
-        let color:number = Math.random()*360 
-        this.div.style.webkitFilter = "hue-rotate("+color+"deg)"
-        this.div.style.filter = "hue-rotate("+color+"deg)"
+        this._color = Math.random()*360 
+        this.div.style.webkitFilter = "hue-rotate("+this._color+"deg)"
+        this.div.style.filter = "hue-rotate("+this._color+"deg)"
+    }
+
+    public move():void {
+        this.x += this.speed
+        if(this.x > window.innerWidth) this.x = -450
+        this.div.style.transform = `translate(${this.x}px, ${this.y}px)`
     }
 
     
